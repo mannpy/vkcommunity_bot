@@ -6,94 +6,55 @@ import json
 import time
 import random
 
+import vk
+
+token = '1af01693c57766ded7a0575b61b7fc556e729bdfbd93ea77aa7a14f8199de872c608438f1e43bc3bd4c07'
+vksession = vk.Session(access_token=token)
+vkapi = vk.API(vksession, v='5.4', lang='ru')
+# vkapi.func(**params)
+
+appName='student'
+
+import pandas as pd
+
 import sys
+
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
 from vkGroupApi import *
 import config
+from db import DB
+
+
+def many(user):
+    pass
+
 
 #######################################################
+def uservk(user_id, userdb):
+    # db = DB()
+    # user = db.getUser(user_id)
 
-def findCommand(read,command,row,appName):
-    # перебераем в цикле наш словарь команд и отправляем сообщение если нашли
+    vk_url = "https://api.vk.com/method/"
+    dom = 'sex, bdate,city, country'
+    resp = requests.get(vk_url + 'users.get', '&user_ids={}&fields={}&v=5.53'.format(user_id, dom))
+    result = resp.json()
 
-    for cmd,otvet in command.iteritems():
-        attachment=''
-        sticker_id=''
+    bdate = result['response'][0]['bdate']
+    city = result['response'][0]['city']['title']
+    sex = result['response'][0]['sex']
+    # print (json.dumps(result, indent=4, sort_keys=True, ensure_ascii=False))
 
-        # если нашли совпадение команды
-        if read in otvet['txt']:
+    bdate = bdate.split('.')
+    bdate = 2016-int(bdate[2])
 
-            if 'attachment' in otvet:
-                attachment = otvet['attachment']
-
-            if 'sticker_id' in otvet:
-                messagesSend(row['user_id'],row['id'],'','',otvet['sticker_id'],appName=appName)
-
-            if not 'answer' in otvet:
-                otvet['answer']=''
-
-            time.sleep(1)
-
-            result = messagesSend(row['user_id'],row['id'],otvet['answer'],attachment,appName=appName)
-
-            if not result:
-                print 'Break ...'
-                break
-
-            print '------------------------------'
-            print (str(row['user_id'])+': "'+read + '" --> ' + cmd)
-
-            return True # нашли команду и выходим
-
-    return False
+    df2 = pd.DataFrame([[user_id, city, bdate, sex]], columns=['user_id', 'city', 'age', 'sex'])
 
 
-def startWork(lastMessages, command, appName, noAnswerSend=True):
-
-    for row in lastMessages:
-
-        status=0
-
-        if int(row['read_state']) == 0:
-
-            # очищаем текст пользователя
-            read = stripRead(row['body'])
-
-            # перебераем в цикле наш словарь команд и отправляем если нашли
-            status=findCommand(read,command,row,appName)
-
-            if status==0 and noAnswerSend:
-                # print (str(i['user_id'])+': "'+read + '" != Не понял команду')
-                messagesSend(row['user_id'],row['id'],'Прости, не понял тебя.' + command['help']['answer'], appName=appName)
-
-                return False
+    return  df2
 
 
-
-def firstAnswer():
-
-    # for user_id,j in userList.iteritems():
-    #     # Первое сообщение
-    #
-    #     ustxtany = ['']
-    #     textw1 = 'Добро пожаловать, мы скинем вам рассписание скажите свою группу'
-    #
-    #     if j['status'] == 0:
-    #         messagesSend(user_id,j['msg_id'],textw1,'photo,photo-128566598_432688189')
-    #         j['status'] = 0
-
-    return
-
-def userList():
-    # for items in dialogs:
-    #     user_id = items['message']['user_id']
-    #     user['msg_id'] = items['message']['user_id']
-    #     user['status'] = 0
-    #
-    #     userList[user_id]=user
-    return
 
 def stripRead(read):
     # очищаем текст пользователя
@@ -105,13 +66,22 @@ def stripRead(read):
     return read
 
 
-def loadCommands(command):
-    ckeysList=[]
-    for key,row in command.iteritems():
-        if not 'skip' in row:
-            ckeysList.append(row['txt'][0])
+if __name__ == "__main__":
 
-    ckeys=', '.join(ckeysList)
-    print ckeys
 
-    return ckeys
+    # user = pd.DataFrame({
+    #     'user_id': 0,
+    #     'raiting': 0,
+    #     'poruchitel_id': 0,
+    #     'city': '',
+    #     'age': 0,
+    #     'sex': ''
+    # }, index=[0])
+
+    df_user = uservk(8438153)
+
+    user = user.append(df_user, ignore_index=True)
+
+    print user
+
+
