@@ -17,7 +17,7 @@ sys.setdefaultencoding('utf-8')
 
 appName = 'botmaney'
 vk_url = "https://api.vk.com/method/"
-access_token = '1af01693c57766ded7a0575b61b7fc556e729bdfbd93ea77aa7a14f8199de872c608438f1e43bc3bd4c07'
+access_token = '*********'
 
 
 #######################################################
