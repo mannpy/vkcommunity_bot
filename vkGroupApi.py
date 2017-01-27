@@ -5,13 +5,14 @@ import requests
 import json
 import time
 import random
+from imp import reload
 
 from colorama import *
 init(autoreset=True)
 
 import sys
 reload(sys)
-sys.setdefaultencoding('utf-8')
+#sys.setdefaultencoding('utf-8')
 
 appName='life'
 
@@ -30,7 +31,7 @@ def loadConfig(appName=appName):
 def requestVk(metod,param='',appName=appName):
     access_token, peer_id = loadConfig(appName)
 
-    vk_url="https://api.vkontakte.ru/method/"
+    vk_url="https://api.vk.com/method/"
     vk_ver='5.53'
 
     resp = requests.get(vk_url+metod,param+'&access_token={}&v={}'.format(access_token,vk_ver))
@@ -46,7 +47,7 @@ def requestVk(metod,param='',appName=appName):
                 return result['response']
 
         elif 'error' in result:
-            print (Fore.RED + 'error_msg: '+result['error']['error_msg'])
+            print((Fore.RED + 'error_msg: '+result['error']['error_msg']))
             return False
 
     except Exception as e:

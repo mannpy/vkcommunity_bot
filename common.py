@@ -5,10 +5,10 @@ import requests
 import json
 import time
 import random
-
+from imp import reload
 import sys
 reload(sys)
-sys.setdefaultencoding('utf-8')
+#sys.setdefaultencoding('utf-8')
 
 from vkGroupApi import *
 import config
@@ -18,7 +18,7 @@ import config
 def findCommand(read,command,row,appName):
     # перебераем в цикле наш словарь команд и отправляем сообщение если нашли
 
-    for cmd,otvet in command.iteritems():
+    for cmd,otvet in command.items():
         attachment=''
         sticker_id=''
 
@@ -39,11 +39,11 @@ def findCommand(read,command,row,appName):
             result = messagesSend(row['user_id'],row['id'],otvet['answer'],attachment,appName=appName)
 
             if not result:
-                print 'Break ...'
+                print('Break ...')
                 break
 
-            print '------------------------------'
-            print (str(row['user_id'])+': "'+read + '" --> ' + cmd)
+            print('------------------------------')
+            print((str(row['user_id'])+': "'+read + '" --> ' + cmd))
 
             return True # нашли команду и выходим
 
@@ -107,11 +107,11 @@ def stripRead(read):
 
 def loadCommands(command):
     ckeysList=[]
-    for key,row in command.iteritems():
+    for key,row in command.items():
         if not 'skip' in row:
             ckeysList.append(row['txt'][0])
 
     ckeys=', '.join(ckeysList)
-    print ckeys
+    print(ckeys)
 
     return ckeys

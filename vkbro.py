@@ -5,10 +5,11 @@ import requests
 import json
 import time
 import random
+from imp import reload
 
 import sys
 reload(sys)
-sys.setdefaultencoding('utf-8')
+#sys.setdefaultencoding('utf-8')
 
 #######################################################
 
@@ -32,7 +33,7 @@ def loadAnekdot(count=100):
 
     for row in result:
         html=row['elementPureHtml']
-        txt= html2text.html2text(html).strip().encode('utf-8')
+        txt= html2text.html2text(html).strip()
         anekdot.append(txt)
     # print (json.dumps(result, indent=4, sort_keys=True, ensure_ascii=False))
     return anekdot
@@ -42,7 +43,7 @@ def loadAnekdot(count=100):
 
 anekdot=loadAnekdot()
 
-print 'Started...'+appName
+print('Started...'+appName)
 
 # Словарь для команд
 
